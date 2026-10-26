@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gold Review</title>
+<style>
+:root{--bg:#111;--panel:#1c1c1c;--fg:#eee;--dim:#999;--red:#e6194b;--blue:#0082c8;--ok:#3cb44b;--warn:#f5a623;--bad:#e6194b;--key:#333}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.4 system-ui,sans-serif}
+header{display:flex;gap:16px;align-items:center;padding:8px 16px;background:var(--panel);position:sticky;top:0;z-index:2}
+header .bar{flex:1;height:8px;background:#333;border-radius:4px;overflow:hidden}header .bar div{height:100%;background:var(--ok)}
+main{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:16px;padding:12px 16px}
+@media(max-width:900px){main{grid-template-columns:1fr}}
+#media img,#media video{width:100%;max-height:78vh;object-fit:contain;background:#000;border-radius:6px;display:block}
+.panel{background:var(--panel);border-radius:8px;padding:14px}
+h2{margin:0 0 6px;font-size:18px}.dim{color:var(--dim)}.q{font-size:16px;margin:10px 0}
+.pred{font-size:20px;font-weight:600;margin:6px 0 10px}.pred small{font-weight:400;color:var(--dim)}
+.btns{display:grid;gap:6px}.btn{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:6px;background:#262626;border:1px solid #333;color:var(--fg);cursor:pointer;text-align:left;font:inherit}
+.btn:hover{border-color:#666}.btn.sel{border-color:var(--ok);background:#1e3320}
+kbd{background:var(--key);border-radius:4px;padding:1px 7px;font:13px ui-monospace,monospace;min-width:22px;text-align:center}
+.row{display:grid;grid-template-columns:70px 1fr 1fr 1fr;gap:6px;align-items:center;margin:4px 0}
+.red{color:var(--red);font-weight:700}.blue{color:#3aa0ff;font-weight:700}
+.classes{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
+textarea{width:100%;background:#0d0d0d;color:var(--fg);border:1px solid #333;border-radius:6px;padding:6px;font:inherit;margin-top:10px}
+.help{font-size:13px;color:var(--dim);margin-top:12px;line-height:1.7}
+.saved{color:var(--ok)}.badge{display:inline-block;padding:1px 8px;border-radius:10px;background:#2a2a2a;font-size:12px;margin-left:6px}
+#stats pre{white-space:pre-wrap;font-size:12px}
+</style></head>
+<body>
+<header><b>Gold review</b><span id="pos" class="dim"></span><div class="bar"><div id="prog"></div></div>
+<span id="timer" class="dim"></span><span id="save" class="dim"></span><span style="color:#5fd35f;margin-left:12px">v2 · notes autosave</span></header>
+<main><section id="media"></section><aside class="panel" id="side"></aside></main>
+<script>
+const POS=['standing','guard','side_control','mount','back','turtle','leg_entanglement','transition','not_applicable'];
+let items=[],verdicts={},i=0,raw=false,pending={},start=Date.now();
+const $=s=>document.querySelector(s);
+async function init(){
+  items=await (await fetch('items.json')).json();
+  verdicts=await (await fetch('verdicts')).json();
+  i=items.findIndex(it=>!answered(it.id));if(i<0)i=0;
+  if(location.hash)i=Math.min(items.length-1,parseInt(location.hash.slice(1))||0);
+  render();setInterval(tick,1000);
+}
+function tick(){const done=items.filter(it=>answered(it.id)).length,m=Math.round((Date.now()-start)/60000);
+  $('#timer').textContent=`${done}/${items.length} done · ${m} min this session`;}
+function media(it){
+  if(it.type==='event')return `<video src="assets/${it.asset}" autoplay loop muted playsinline controls></video>`;
+  return `<img src="assets/${raw&&it.raw?it.raw:it.asset}" alt="">`;
+}
+function btn(key,label,val,sel){return `<button class="btn${sel?' sel':''}" data-v="${val}"><kbd>${key}</kbd>${label}</button>`}
+function render(){
+  const it=items[i],v=verdicts[it.id]||{};pending={};
+  $('#pos').textContent=`#${i+1} · ${it.type} · ${it.stratum}`;
+  $('#prog').style.width=(100*Object.keys(verdicts).length/items.length)+'%';
+  $('#media').innerHTML=media(it);
+  let h='';
+  if(it.type==='mask'){
+    h=`<h2>Masks</h2><div class="q">Is each outlined person fully covered and only that person?</div>
+    <div class="row"><span></span><b>good</b><b>partial</b><b>wrong</b></div>
+    <div class="row"><span class="red">RED</span>${['good','partial','wrong'].map((x,j)=>btn('QWE'[j],'',`red:${x}`,v.red===x)).join('')}</div>
+    <div class="row"><span class="blue">BLUE</span>${['good','partial','wrong'].map((x,j)=>btn('ASD'[j],'',`blue:${x}`,v.blue===x)).join('')}</div>
+    <div class="btns" style="margin-top:8px">${btn('1','Both good',"both:good")}${btn('5','Unclear / skip','unclear')}</div>
+    <div class="help">partial = misses a limb/head or grabs a bit of the other person · wrong = mostly the other person, merged, or not a person.<br><kbd>Space</kbd> toggle overlay/raw</div>`;
+  }else if(it.type==='position'){
+    const p=it.pred;
+    h=`<h2>Position</h2><div class="pred">${p.position} <small>/ ${p.detail}</small><br><small>top: <span class="${p.top==='RED'?'red':p.top==='BLUE'?'blue':''}">${p.top}</span></small></div>
+    <div class="btns">${btn('1','All correct','correct',v.verdict==='correct')}${btn('2','Position right, detail wrong','detail_wrong',v.verdict==='detail_wrong')}
+    ${btn('3','Top actor wrong','top_wrong',v.verdict==='top_wrong')}${btn('4','Position wrong → pick correct','position_wrong',v.verdict==='position_wrong')}
+    ${btn('5','Unclear / ambiguous','unclear',v.verdict==='unclear')}</div>
+    <div class="classes" id="classes" style="display:${v.verdict==='position_wrong'?'grid':'none'}">${POS.map((c,j)=>btn('QWERTYUIO'[j],c,'class:'+c,v.correct===c)).join('')}</div>
+    <div class="help">Judged on the outlined RED/BLUE pair. Transition = scramble / between positions.<br><kbd>Space</kbd> toggle outlines/raw</div>`;
+  }else if(it.type==='identity'){
+    h=`<h2>Identity</h2><div class="q">Is the <span class="red">RED</span> person the same individual in all 4 moments?</div>
+    <div class="btns">${btn('1','Same person throughout','same',v.verdict==='same')}${btn('2','Switches to someone else','switch',v.verdict==='switch')}
+    ${btn('3','Same person but mask badly wrong somewhere','same_bad_mask',v.verdict==='same_bad_mask')}${btn('5','Unclear','unclear',v.verdict==='unclear')}</div>`;
+  }else if(it.type==='strike'){
+    const p=it.pred;
+    if(p.strike==='yes'){
+      h=`<h2>Strike</h2><div class="pred"><span class="${p.striker==='RED'?'red':'blue'}">${p.striker}</span> ${p.type} <small>→ ${p.target} · ${p.result}</small></div>
+      <div class="dim">6 frames, 80 ms apart; peak at tile ${p.peak_tile}</div>
+      <div class="btns">${btn('1','Correct','correct',v.verdict==='correct')}${btn('2','Real strike, but type/target/result wrong','details_wrong',v.verdict==='details_wrong')}
+      ${btn('3','Wrong striker','striker_wrong',v.verdict==='striker_wrong')}${btn('4','No strike thrown','no_strike',v.verdict==='no_strike')}${btn('5','Unclear','unclear',v.verdict==='unclear')}</div>`;
+    }else{
+      h=`<h2>Strike (rejected candidate)</h2><div class="pred">Labelled: no strike</div><div class="dim">A fast limb motion was detected near tile 4; the labeller said it is not a strike.</div>
+      <div class="btns">${btn('1','Correct – no strike','correct',v.verdict==='correct')}${btn('2','Missed – a strike was thrown','missed_strike',v.verdict==='missed_strike')}${btn('5','Unclear','unclear',v.verdict==='unclear')}</div>`;
+    }
+  }else{
+    const p=it.pred;
+    h=`<h2>Event</h2><div class="pred">${p.event} <small>· ${p.outcome}</small></div><div class="dim">by ${p.actor}</div><div class="q dim">${p.detail||''}</div>
+    <div class="btns">${btn('1','Correct','correct',v.verdict==='correct')}${btn('2','Happened, but actor/outcome/timing wrong','partly',v.verdict==='partly')}
+    ${btn('3','Did not happen / wrong type','wrong',v.verdict==='wrong')}${btn('5','Unclear','unclear',v.verdict==='unclear')}</div>
+    <div class="help">Clip = event window ±1.5 s, looping.</div>`;
+  }
+  h+=`<textarea id="note" rows="2" placeholder="note (N to focus, Esc to leave; saves automatically)"></textarea>
+  <div class="help"><kbd>←</kbd>/<kbd>Backspace</kbd> back · <kbd>→</kbd> next · <kbd>J</kbd> jump to next unanswered · <span class="dim">src ${it.src}</span>${v.verdict||v.red?'<span class="badge saved">answered</span>':''}<br>
+  <a href="stats" target="_blank" style="color:#8ab4ff">running accuracy</a></div>`;
+  $('#side').innerHTML=h;
+  const ne=$('#note');ne.value=v.note||'';ne.oninput=()=>{clearTimeout(noteTimer);noteTimer=setTimeout(saveNote,800);};ne.onblur=saveNote;
+  $('#side').querySelectorAll('.btn').forEach(b=>b.onclick=()=>choose(b.dataset.v));
+}
+async function save(rec){
+  const it=items[i];rec={id:it.id,type:it.type,stratum:it.stratum,src:it.src,...rec,note:$('#note').value||undefined};
+  verdicts[it.id]=rec;$('#save').textContent='saving…';
+  try{await fetch('verdict',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(rec)});$('#save').textContent='saved';}
+  catch(e){$('#save').textContent='SAVE FAILED – is gold_serve.py running?';}
+}
+function answered(id){const v=verdicts[id];return !!(v&&v.verdict);}
+let noteTimer=null;
+async function saveNote(){
+  // notes are saved on their own (typing, leaving the box, navigating), independent of the verdict keys
+  clearTimeout(noteTimer);const el=$('#note');if(!el)return;
+  const it=items[i],v=verdicts[it.id]||{},note=el.value;
+  if((v.note||'')===note)return;
+  const rec={...v,id:it.id,type:it.type,stratum:it.stratum,src:it.src,note:note||undefined};
+  verdicts[it.id]=rec;$('#save').textContent='saving note…';
+  try{await fetch('verdict',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(rec)});$('#save').textContent='note saved';}
+  catch(e){$('#save').textContent='SAVE FAILED – is gold_serve.py running?';}
+}
+function go(n){saveNote();i=n;raw=false;render();}
+function next(){if(i<items.length-1)go(i+1);}
+function choose(val){
+  const it=items[i],v=verdicts[it.id]||{};
+  if(val==='unclear'){save({verdict:'unclear'}).then(next);return;}
+  if(it.type==='mask'){
+    if(val==='both:good'){save({red:'good',blue:'good',verdict:'done'}).then(next);return;}
+    const [who,q]=val.split(':');pending={red:v.red,blue:v.blue,...pending,[who]:q};
+    if(pending.red&&pending.blue&&(who==='blue'||v.blue)){save({red:pending.red,blue:pending.blue,verdict:'done'}).then(next);}
+    else{verdicts[it.id]={...v,...pending,note:$('#note').value||undefined};const keep=pending;render();pending=keep;}
+    return;
+  }
+  if(it.type==='position'){
+    if(val==='position_wrong'){$('#classes').style.display='grid';return;}
+    if(val.startsWith('class:')){save({verdict:'position_wrong',correct:val.slice(6)}).then(next);return;}
+  }
+  save({verdict:val}).then(next);
+}
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='TEXTAREA'){if(e.key==='Escape')e.target.blur();return;}
+  const it=items[i],k=e.key.toLowerCase();
+  if(e.key==='ArrowLeft'||e.key==='Backspace'){if(i>0)go(i-1);e.preventDefault();return;}
+  if(e.key==='ArrowRight'){next();return;}
+  if(k==='j'){const n=items.findIndex((x,j)=>j>i&&!answered(x.id));if(n>=0){go(n);}return;}
+  if(k==='n'){$('#note').focus();e.preventDefault();return;}
+  if(e.key===' '){raw=!raw;$('#media').innerHTML=media(it);e.preventDefault();return;}
+  let val=null;
+  if(it.type==='mask')val={'1':'both:good','5':'unclear',q:'red:good',w:'red:partial',e:'red:wrong',a:'blue:good',s:'blue:partial',d:'blue:wrong'}[k];
+  else if(it.type==='position'){
+    val={'1':'correct','2':'detail_wrong','3':'top_wrong','4':'position_wrong','5':'unclear'}[k];
+    const c='qwertyuio'.indexOf(k);if(c>=0&&$('#classes').style.display==='grid')val='class:'+POS[c];
+  }
+  else if(it.type==='strike')val=it.pred.strike==='yes'?{'1':'correct','2':'details_wrong','3':'striker_wrong','4':'no_strike','5':'unclear'}[k]:{'1':'correct','2':'missed_strike','5':'unclear'}[k];
+  else if(it.type==='identity')val={'1':'same','2':'switch','3':'same_bad_mask','5':'unclear'}[k];
+  else val={'1':'correct','2':'partly','3':'wrong','5':'unclear'}[k];
+  if(val)choose(val);
+});
+window.addEventListener('hashchange',()=>{const n=parseInt(location.hash.slice(1));if(n>=0&&n<items.length&&n!==i)go(n);});
+window.addEventListener('pagehide',()=>{const el=$('#note');if(!el||!items.length)return;const it=items[i],v=verdicts[it.id]||{};
+  if((v.note||'')!==el.value)navigator.sendBeacon('verdict',JSON.stringify({...v,id:it.id,type:it.type,stratum:it.stratum,src:it.src,note:el.value||undefined}));});
+init();
+</script></body></html>

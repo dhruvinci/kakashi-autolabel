@@ -1,0 +1,90 @@
+{
+ "version": "autolabel-taxonomy-v1",
+ "status": "draft_for_calibration",
+ "notes": "Small closed vocabularies for training views. Every field allows 'unknown'. Rich open-ended combat descriptions stay in the existing claim records; these labels do not replace them.",
+ "interval": {
+  "clip_context": {
+   "multi": false,
+   "values": [
+    "competition",
+    "training_sparring",
+    "training_drilling",
+    "instructional_demo",
+    "other",
+    "unknown"
+   ],
+   "definition": "What kind of footage the 20 s interval is, judged from the frames (not the video title)."
+  }
+ },
+ "frame": {
+  "shot_type": {
+   "multi": false,
+   "values": [
+    "live_wide",
+    "live_close",
+    "replay_or_slowmo",
+    "graphics_or_non_action",
+    "cutaway_crowd_or_corner",
+    "unknown"
+   ],
+   "definition": "Camera/edit state of this frame."
+  },
+  "pair_configuration": {
+   "multi": false,
+   "values": [
+    "no_engagement",
+    "standing_separated",
+    "standing_clinch_or_grips",
+    "takedown_or_throw_in_progress",
+    "closed_guard",
+    "open_guard",
+    "half_guard",
+    "side_control",
+    "mount",
+    "back_control",
+    "north_south",
+    "turtle",
+    "leg_entanglement",
+    "scramble_or_transition",
+    "multiple_pairs",
+    "unknown"
+   ],
+   "definition": "Positional relationship of the primary engaged pair of athletes in this frame. 'no_engagement' when fewer than two athletes are interacting. 'unknown' when occluded/ambiguous.",
+   "applies_when": "two athletes visible and interacting"
+  }
+ },
+ "person": {
+  "role": {
+   "multi": false,
+   "values": [
+    "athlete",
+    "referee",
+    "instructor",
+    "coach_or_corner",
+    "spectator_or_crew",
+    "unknown"
+   ],
+   "definition": "Role of the person in this interval, constant for one identity. 'athlete' = actively competing, sparring or drilling on the mat/cage during this interval (the demonstration partner of an instructor is an athlete). 'instructor' = the person teaching or demonstrating. 'referee' = match official. 'coach_or_corner' = coaching from the side. Anyone only watching, waiting, sitting at the edge, filming or passing through is 'spectator_or_crew', even if dressed to train."
+  },
+  "posture": {
+   "multi": false,
+   "values": [
+    "standing",
+    "crouched_or_kneeling",
+    "seated",
+    "supine",
+    "prone",
+    "side_lying",
+    "all_fours",
+    "airborne_or_inverted",
+    "occluded",
+    "unknown"
+   ],
+   "definition": "Body orientation of this person in this frame, from visible evidence only. Labelled for athletes, referees and instructors; spectators/crew get 'unknown'."
+  }
+ },
+ "scope": {
+  "detection": "Every visible person whose body is at least partly visible and not purely a crowd texture is a person instance. Persons on printed graphics/posters/screens are excluded. Spectators and crew are labelled persons with role spectator_or_crew so they are never silent background.",
+  "segmentation": "Visible-region instance mask per person; overlaps resolved so each pixel belongs to at most one person."
+ }
+}

@@ -1,0 +1,12 @@
+[
+  {"query": "no gi jiu jitsu narrated rolling", "sport": "nogi", "context": "training"},
+  {"query": "MMA technical sparring gym rounds", "sport": "mma", "context": "training"},
+  {"query": "MMA wrestling grappling sparring training", "sport": "mma", "context": "training"},
+  {"query": "MMA wall wrestling tutorial", "sport": "mma", "context": "tutorial"},
+  {"query": "MMA ground and pound technique tutorial", "sport": "mma", "context": "tutorial"},
+  {"query": "no gi leg lock defense escape tutorial", "sport": "nogi", "context": "tutorial"},
+  {"query": "no gi back escape submission defense tutorial", "sport": "nogi", "context": "tutorial"},
+  {"query": "jiu jitsu gi match full", "sport": "gi", "context": "competition"},
+  {"query": "gi jiu jitsu open mat roll", "sport": "gi", "context": "training"},
+  {"query": "spider guard tutorial gi", "sport": "gi", "context": "tutorial"}
+]

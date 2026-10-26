@@ -1,0 +1,31 @@
+{
+ "what": "IoU between the propagated dense mask and the held-out label-frame mask, per actor and held-out anchor",
+ "caveat": "both masks are model output; agreement, not accuracy",
+ "intervals": 1160,
+ "intervals_by_cohort": {
+  "breadth": 631,
+  "matches": 186,
+  "gi": 143,
+  "trial": 200
+ },
+ "dense_frames": 280235,
+ "actor_anchors": 30750,
+ "median": 0.953,
+ "p10": 0.712,
+ "p25": 0.876,
+ "share_ge_0.9": 0.703,
+ "share_lt_0.7": 0.094,
+ "median_by_cohort": {
+  "breadth": 0.952,
+  "gi": 0.951,
+  "matches": 0.955,
+  "trial": 0.955
+ },
+ "p10_by_cohort": {
+  "breadth": 0.704,
+  "gi": 0.699,
+  "matches": 0.72,
+  "trial": 0.74
+ },
+ "mean": 0.886
+}

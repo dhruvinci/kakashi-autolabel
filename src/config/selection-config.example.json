@@ -1,0 +1,12 @@
+{
+  "_comment": "Example selection config for select_sources.py and gi_select.py. The lists used for the original catalogue named specific official channels and events and are not published. Copy to manifests/selection-config.json and fill in your own.",
+  "mma_channels": {"<channel_id>": "<official MMA promotion channel>"},
+  "nogi_channels": {"<channel_id>": "<no-gi grappling channel>"},
+  "training_channels": ["<channel_id of a gym that posts rolling rounds>"],
+  "grappling_channels": ["<channel_id of a mixed-rules promotion whose grappling titles count as no-gi>"],
+  "nogi_title_terms": ["\\bsubmission only\\b"],
+  "mma_title_terms": [],
+  "other_scope_terms": ["\\bvideo game\\b"],
+  "excluded_title_patterns": [],
+  "gi_competition_terms": ["\\bworld championship\\b"]
+}

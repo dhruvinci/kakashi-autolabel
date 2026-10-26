@@ -1,0 +1,20 @@
+__pycache__/
+*.pyc
+*.npz
+*.npy
+*.pt
+*.ckpt
+*.mkv
+*.mp4
+.venv*/
+# data directories created next to src/ when the code runs (never published)
+/media/
+/evidence/
+/autolabel/
+/annotations/
+/manifests/
+/exports/
+/reviews/
+/receipts/
+/review/
+/benchmarks/

@@ -1,0 +1,92 @@
+{
+ "run": "v1",
+ "created_at": "2026-10-12T00:58:08.244989+00:00",
+ "taxonomy_sha256": "4d5b23e6d1536a6ba01938f6cee51def59aa7e7dff7604320d55daf1e580e8ef",
+ "intervals": 1526,
+ "images": 65159,
+ "instances": 485028,
+ "images_with_review_flags": 7980,
+ "sources": 670,
+ "intervals_by_cohort": {
+  "breadth": 942,
+  "trial": 200,
+  "gi": 198,
+  "matches": 186
+ },
+ "sources_by_cohort": {
+  "breadth": 471,
+  "trial": 100,
+  "gi": 99,
+  "matches": 15
+ },
+ "intervals_by_clip_context": {
+  "competition": 635,
+  "training_sparring": 449,
+  "instructional_demo": 413,
+  "training_drilling": 27,
+  "unknown": 2
+ },
+ "frames_by_quality_tier": {
+  "clean": 48056,
+  "rejected": 7770,
+  "dense_replaced_unverified": 5120,
+  "astra_verified": 4207,
+  "flagged_unverified": 6
+ },
+ "frames_by_position": {
+  "guard": 21591,
+  "standing": 20253,
+  "transition": 3796,
+  "side_control": 3723,
+  "transition_or_uncertain": 3123,
+  "not_applicable": 2794,
+  "turtle": 2737,
+  "back": 2536,
+  "mount": 2334,
+  "leg_entanglement": 2128,
+  "unknown": 144
+ },
+ "events": 3795,
+ "events_by_type": {
+  "striking_exchange": 1201,
+  "takedown": 556,
+  "pass": 415,
+  "stand_up": 407,
+  "reset": 326,
+  "escape": 202,
+  "submission_attempt": 174,
+  "reguard": 133,
+  "back_take": 111,
+  "sweep": 91,
+  "leg_entry": 78,
+  "mount_achieve": 70,
+  "referee_stoppage": 20,
+  "knockdown": 11
+ },
+ "events_crossing_shot_cut": 60,
+ "strikes": 1322,
+ "strikes_by_type": {
+  "jab": 227,
+  "ground_punch": 193,
+  "leg_kick": 159,
+  "hook": 116,
+  "cross": 98,
+  "overhand": 81,
+  "body_kick": 81,
+  "head_kick": 71,
+  "hammerfist": 71,
+  "front_kick": 67,
+  "knee": 55,
+  "body_punch": 47,
+  "elbow": 26,
+  "spinning": 19,
+  "uppercut": 11
+ },
+ "strikes_by_result": {
+  "blocked": 389,
+  "unclear": 368,
+  "landed_clean": 203,
+  "landed_partial": 203,
+  "missed": 159
+ }
+}

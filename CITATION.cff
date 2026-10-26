@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it."
+title: "Kakashi auto-labeller: labelling combat-sports video with a VLM agent (GPT-6 Astra) and SAM 3.1"
+authors:
+  - family-names: Chakravarthi
+    given-names: Dhruva
+year: 2026
+repository-code: "https://github.com/dhruvinci/kakashi-autolabel"
+license: MIT
